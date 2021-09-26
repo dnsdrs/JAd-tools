@@ -118,11 +118,11 @@
                 // cust_params will include dataLayer values AND prebid hb_ values including winning bid information 
                 adsParams = toJoin.join("/");
 
-                // call the previously defined function to create a Dailymotion player with ad
+                // call the below defined function to create a Dailymotion player with ad
                 createDailymotionPlayerWithAd(adsParams);
             })
             .catch(() => {
-                // call the previously defined function to create a Dailymotion player without ad
+                // call the below defined function to create a Dailymotion player without ad
                 createDailymotionPlayerWithoutAd();
             });
 
