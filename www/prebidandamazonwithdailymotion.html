@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prebid with Dailymotion</title>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <script src="https://geo.dailymotion.com/libs/player/x1hs9.js"></script>
+    <script src="https://cdn.api.getjad.io/prebid/120157152"></script>
+    <script src="https://c.amazon-adsystem.com/aax2/apstag.js"></script>
+
+    <script id="toText">
+        // Example of a page dataLayer that should go in VAST cust_params 
+        var dataLayer = {
+            key1: ["value1", "value2"],
+            key2: ["value1"]
+        }
+
+        // Example of IU for VAST
+        var iu = "/120157152/PUREPEOPLE_FR_WEB/article/vertical"
+
+        // To transform dataLayer table into string cust_params
+        var keyvalues = []
+        for (const [key, values] of Object.entries(dataLayer)) {
+            keyvalues.push(key + "=" + values.join(","))
+        }
+        keyvalues = keyvalues.join("&")
+
+        // Now let's start prebid
+        var pbjs = pbjs || {};
+        pbjs.que = pbjs.que || [];
+
+        // Failsafe is even more important than with display :
+        // If there is a failure and no failsafe, even the video content will not load
+        var failsafeTimeout = 4000;
+
+        // Example of instream video prebid ad unit 
+        var videoConfig = {
+            prebid: {
+                code: 'video1',
+                mediaTypes: {
+                    video: {
+                        context: 'instream',
+                        playerSize: [640, 480],
+                        mimes: ['video/mp4'],
+                        protocols: [1, 2, 3, 4, 5, 6, 7, 8],
+                        playbackmethod: [2],
+                        skip: 1
+                    }
+                },
+                bids: [{
+                    bidder: 'appnexus',
+                    params: {
+                        placementId: 19482691
+
+                    }
+                }]
+            },
+            amazon: [{
+                slotID: 'preroll_playertop',
+                mediaType: 'video',
+                sizes: [
+                    [640, 390]
+                ]
+            }]
+        }
+
+        // Initiate promise - this is what will decide when the player can be created (i.e. when prebid bid response are recieved)
+        var videoHeaderBiddingIsFinished, videoHeaderBiddingHasFailed;
+
+        var videoHeaderBiddingPromise = new Promise((resolve, reject) => {
+            videoHeaderBiddingIsFinished = resolve
+            videoHeaderBiddingHasFailed = reject
+        });
+
+        // Video request manager
+        var videoRequestManager = {
+            playerCreated: false,
+            amazon: {
+                bidRecieved: false,
+                custParams: "",
+            },
+            prebid: {
+                bidRecieved: false,
+                custParams: "",
+            }
+        };
+
+        // Init prebid
+        pbjs.que.push(function() {
+            pbjs.setConfig({
+                cache: {
+                    url: 'https://prebid.adnxs.com/pbc/v1/cache'
+                }
+            });
+        });
+
+        // Init amazon
+        window.apstag = window.apstag || {
+            init: function() {
+                apstag._Q.push(["i", arguments, (new Date).getTime()])
+            },
+            fetchBids: function() {
+                apstag._Q.push(["f", arguments, (new Date).getTime()])
+            },
+            setDisplayBids: function() {},
+            _Q: []
+        };
+
+        apstag.init({
+            pubID: 3309,
+            deals: true
+        });
+
+        // Let's prebid 
+        pbjs.que.push(function() {
+            pbjs.addAdUnits(videoConfig.prebid);
+
+            pbjs.requestBids({
+                bidsBackHandler: function(bids) {
+                    var vastUrl = pbjs.adServers.dfp.buildVideoUrl({
+                        adUnit: videoConfig.prebid,
+                        params: {
+                            output: 'vast'
+                        }
+                    })
+
+                    videoRequestManager.prebid.custParams = prebidCallbackToCustParams(vastUrl);
+                    videoRequestManager.prebid.bidRecieved = true
+
+                    if (videoRequestManager.prebid.bidRecieved && videoRequestManager.amazon.bidRecieved) {
+                        videoHeaderBiddingIsFinished([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+                    }
+                    // the bid callback resolves the promise with a VAST url made by prebid
+                    // JWPlayer works fine with a VAST url but Dailymotion require a specifically structured and encoded "adsParams"   
+                }
+            });
+        });
+
+        // Prebid from callback to custParams
+        function prebidCallbackToCustParams(callback) {
+            var custParams = decodeURIComponent(callback.split("cust_params=")[1])
+            return encodeURIComponent(custParams);
+        }
+
+        // Let's amazon
+        apstag.fetchBids({
+                slots: videoConfig.amazon,
+                timeout: 3000
+            },
+            function(bids) {
+
+                videoRequestManager.amazon.custParams = attachVideoTargeting(bids);
+                videoRequestManager.amazon.bidRecieved = true
+
+                if (videoRequestManager.prebid.bidRecieved && videoRequestManager.amazon.bidRecieved) {
+                    videoHeaderBiddingIsFinished([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+                }
+
+            }
+        );
+
+        // Amazon from callback to custParams
+        function attachVideoTargeting(bids) {
+            let targeting = bids.filter(function(bid) {
+                    return bid.mediaType === 'video'
+                })
+                .map(function(bid) {
+                    return bid.helpers.encodedQsParams()
+                })
+                .join('');
+            return targeting
+        };
+
+        // Failsafe !
+        setTimeout(function() {
+            videoHeaderBiddingHasFailed([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+        }, failsafeTimeout);
+
+        // What to do when prebid is finished (i.e. the promise is resolved)
+        videoHeaderBiddingPromise
+            .then((callback) => {
+
+                var toJoin = []
+                toJoin.push(encodeURIComponent(keyvalues));
+                toJoin.push(callback.join(""));
+
+                custParams = toJoin.join(encodeURIComponent("&"));
+
+                toJoin = [];
+                // encode the IU
+                iu = encodeURIComponent(iu);
+                toJoin.push(iu);
+                toJoin.push(custParams);
+
+                // join the encoded iu and the encoded cust_params, keep the "/" non encoded
+                // Dailymotion will use this "/" for splitting, take the first value for IU and the second for cust_params
+                // cust_params will include dataLayer values AND prebid hb_ values including winning bid information 
+                adsParams = toJoin.join("/");
+
+                // call the below defined function to create a Dailymotion player with ad
+                createDailymotionPlayerWithAd(adsParams);
+            })
+            .catch((callback) => {
+
+                var toJoin = []
+                toJoin.push(encodeURIComponent(keyvalues));
+                toJoin.push(callback.join(""));
+
+                custParams = toJoin.join(encodeURIComponent("&"));
+
+                toJoin = [];
+                // encode the IU
+                iu = encodeURIComponent(iu);
+                toJoin.push(iu);
+                toJoin.push(custParams);
+
+                // join the encoded iu and the encoded cust_params, keep the "/" non encoded
+                // Dailymotion will use this "/" for splitting, take the first value for IU and the second for cust_params
+                // cust_params will include dataLayer values AND prebid hb_ values including winning bid information 
+                adsParams = toJoin.join("/");
+
+                // call the below defined function to create a Dailymotion player with ad
+                createDailymotionPlayerWithoutAd(adsParams);
+            });
+
+        // Create a Dailymotion player with ads from adsParams
+        function createDailymotionPlayerWithAd(adsParams) {
+            dailymotion.createPlayer("player", {
+                video: "x84fxvq",
+                params: {
+                    adsConfig: {
+                        adsParams: adsParams,
+                    },
+                }
+            });
+            console.log("success >>" + decodeURIComponent(adsParams))
+        }
+
+        // Create a Dailymotion player without ads in case of Adblock or random prebid failure
+        function createDailymotionPlayerWithoutAd(adsParams) {
+            dailymotion.createPlayer("player", {
+                video: "x84fxvq",
+                params: {
+                    adsConfig: {
+                        adsParams: adsParams,
+                    },
+                }
+            });
+            console.log("fail >>" + decodeURIComponent(adsParams))
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body style="height:100vh;">
+
+    <nav>
+        <a href="index.html" class="href">
+            <div class="logo"><span class="tools">🧰</span></div>
+        </a>
+        <div><a href="demos.html">← Back to demos</a></div>
+    </nav>
+
+    <h1 style="padding: 20px;">Demo - Video header bidding with prebid and amazon</h1>
+
+    <section style="display:flex !important; flex-direction: row !important">
+        <div style="width:480px; padding:20px;">
+            <div id="player"></div>
+            <div id="buttons">
+                <button id="playWithDaily">Play with Dailymotion</button>
+                <button id="playWithJW">Play with JWPlayer</button>
+            </div>
+        </div>
+        <pre style="margin-top:20px" class="prettyprint"></pre>
+    </section>
+
+    <script>
+        document.querySelector("pre").innerHTML = document.querySelector("script#toText").innerHTML
+    </script>
+
+    <style>
+        #buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        button {
+            border: none;
+            padding: 5px;
+            background-color: #E3E3E3;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+
+</body>
+
+</html>
