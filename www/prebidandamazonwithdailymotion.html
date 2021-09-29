@@ -12,32 +12,16 @@
     <script src="https://c.amazon-adsystem.com/aax2/apstag.js"></script>
 
     <script id="toText">
-        // Example of a page dataLayer that should go in VAST cust_params 
-        var dataLayer = {
-            key1: ["value1", "value2"],
-            key2: ["value1"]
+        var pageConfig = {
+            dataLayer: {
+                key1: ["value1", "value2"],
+                key2: ["value1"]
+            },
+            iu: "/120157152/PUREPEOPLE_FR_WEB/article/vertical"
         }
 
-        // Example of IU for VAST
-        var iu = "/120157152/PUREPEOPLE_FR_WEB/article/vertical"
-
-        // To transform dataLayer table into string cust_params
-        var keyvalues = []
-        for (const [key, values] of Object.entries(dataLayer)) {
-            keyvalues.push(key + "=" + values.join(","))
-        }
-        keyvalues = keyvalues.join("&")
-
-        // Now let's start prebid
-        var pbjs = pbjs || {};
-        pbjs.que = pbjs.que || [];
-
-        // Failsafe is even more important than with display :
-        // If there is a failure and no failsafe, even the video content will not load
-        var failsafeTimeout = 4000;
-
-        // Example of instream video prebid ad unit 
-        var videoConfig = {
+        var videoHbConfig = {
+            failsafeTimeout: 4000,
             prebid: {
                 code: 'video1',
                 mediaTypes: {
@@ -67,14 +51,6 @@
             }]
         }
 
-        // Initiate promise - this is what will decide when the player can be created (i.e. when prebid bid response are recieved)
-        var videoHeaderBiddingIsFinished, videoHeaderBiddingHasFailed;
-
-        var videoHeaderBiddingPromise = new Promise((resolve, reject) => {
-            videoHeaderBiddingIsFinished = resolve
-            videoHeaderBiddingHasFailed = reject
-        });
-
         // Video request manager
         var videoRequestManager = {
             playerCreated: false,
@@ -88,7 +64,49 @@
             }
         };
 
+        function fromDataLayerToEncodedCustParams(dataLayer) {
+            var keyvalues = []
+            for (const [key, values] of Object.entries(dataLayer)) {
+                keyvalues.push(key + "=" + values.join(","))
+            }
+            return encodeURIComponent(keyvalues.join("&"))
+        }
+
+        // Prebid from callback to custParams
+        function prebidCallbackToCustParams(callback) {
+            var custParams = decodeURIComponent(callback.split("cust_params=")[1])
+            return encodeURIComponent(custParams);
+        }
+
+        // Amazon from callback to custParams
+        function attachVideoTargeting(bids) {
+            let targeting = bids.filter(function(bid) {
+                    return bid.mediaType === 'video'
+                })
+                .map(function(bid) {
+                    return bid.helpers.encodedQsParams()
+                })
+                .join('');
+            return targeting
+        };
+
+        function fromHbCallbackToAdsParams(hbCallback) {
+            var toJoin = []
+            toJoin.push(fromDataLayerToEncodedCustParams(pageConfig.dataLayer));
+            if (hbCallback.length > 1) toJoin.push(hbCallback.join(""));
+
+            custParams = toJoin.join(encodeURIComponent("&"));
+
+            toJoin = [];
+            toJoin.push(pageConfig.iu);
+            toJoin.push(custParams);
+            return toJoin.join("/");
+        }
+
         // Init prebid
+        var pbjs = pbjs || {};
+        pbjs.que = pbjs.que || [];
+
         pbjs.que.push(function() {
             pbjs.setConfig({
                 cache: {
@@ -114,14 +132,22 @@
             deals: true
         });
 
+        // Initiate promise - this is what will decide when the player can be created (i.e. when prebid bid response are recieved)
+        var videoHeaderBiddingIsFinished, videoHeaderBiddingHasFailed;
+
+        var videoHeaderBiddingPromise = new Promise((resolve, reject) => {
+            videoHeaderBiddingIsFinished = resolve
+            videoHeaderBiddingHasFailed = reject
+        });
+
         // Let's prebid 
         pbjs.que.push(function() {
-            pbjs.addAdUnits(videoConfig.prebid);
+            pbjs.addAdUnits(videoHbConfig.prebid);
 
             pbjs.requestBids({
                 bidsBackHandler: function(bids) {
                     var vastUrl = pbjs.adServers.dfp.buildVideoUrl({
-                        adUnit: videoConfig.prebid,
+                        adUnit: videoHbConfig.prebid,
                         params: {
                             output: 'vast'
                         }
@@ -139,15 +165,9 @@
             });
         });
 
-        // Prebid from callback to custParams
-        function prebidCallbackToCustParams(callback) {
-            var custParams = decodeURIComponent(callback.split("cust_params=")[1])
-            return encodeURIComponent(custParams);
-        }
-
         // Let's amazon
         apstag.fetchBids({
-                slots: videoConfig.amazon,
+                slots: videoHbConfig.amazon,
                 timeout: 3000
             },
             function(bids) {
@@ -162,69 +182,25 @@
             }
         );
 
-        // Amazon from callback to custParams
-        function attachVideoTargeting(bids) {
-            let targeting = bids.filter(function(bid) {
-                    return bid.mediaType === 'video'
-                })
-                .map(function(bid) {
-                    return bid.helpers.encodedQsParams()
-                })
-                .join('');
-            return targeting
-        };
-
         // Failsafe !
         setTimeout(function() {
-            videoHeaderBiddingHasFailed([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
-        }, failsafeTimeout);
+            if (!videoRequestManager.playerCreated) {
+                videoHeaderBiddingHasFailed([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+            }
+        }, videoHbConfig.failsafeTimeout);
 
         // What to do when prebid is finished (i.e. the promise is resolved)
         videoHeaderBiddingPromise
-            .then((callback) => {
-
-                var toJoin = []
-                toJoin.push(encodeURIComponent(keyvalues));
-                toJoin.push(callback.join(""));
-
-                custParams = toJoin.join(encodeURIComponent("&"));
-
-                toJoin = [];
-                // encode the IU
-                iu = encodeURIComponent(iu);
-                toJoin.push(iu);
-                toJoin.push(custParams);
-
-                // join the encoded iu and the encoded cust_params, keep the "/" non encoded
-                // Dailymotion will use this "/" for splitting, take the first value for IU and the second for cust_params
-                // cust_params will include dataLayer values AND prebid hb_ values including winning bid information 
-                adsParams = toJoin.join("/");
-
-                // call the below defined function to create a Dailymotion player with ad
-                createDailymotionPlayerWithAd(adsParams);
+            .then((hbCallback) => {
+                createDailymotionPlayerWithAd(fromHbCallbackToAdsParams(hbCallback));
+                videoRequestManager.playerCreated = true
+                console.log("success >> dm triggered on hb finished")
             })
-            .catch((callback) => {
-
-                var toJoin = []
-                toJoin.push(encodeURIComponent(keyvalues));
-                toJoin.push(callback.join(""));
-
-                custParams = toJoin.join(encodeURIComponent("&"));
-
-                toJoin = [];
-                // encode the IU
-                iu = encodeURIComponent(iu);
-                toJoin.push(iu);
-                toJoin.push(custParams);
-
-                // join the encoded iu and the encoded cust_params, keep the "/" non encoded
-                // Dailymotion will use this "/" for splitting, take the first value for IU and the second for cust_params
-                // cust_params will include dataLayer values AND prebid hb_ values including winning bid information 
-                adsParams = toJoin.join("/");
-
-                // call the below defined function to create a Dailymotion player with ad
-                createDailymotionPlayerWithoutAd(adsParams);
-            });
+            .catch((hbCallback) => {
+                createDailymotionPlayerWithAd(fromHbCallbackToAdsParams(hbCallback));
+                videoRequestManager.playerCreated = true
+                console.log("fail >> dm triggered on timeout")
+            })
 
         // Create a Dailymotion player with ads from adsParams
         function createDailymotionPlayerWithAd(adsParams) {
@@ -236,20 +212,6 @@
                     },
                 }
             });
-            console.log("success >>" + decodeURIComponent(adsParams))
-        }
-
-        // Create a Dailymotion player without ads in case of Adblock or random prebid failure
-        function createDailymotionPlayerWithoutAd(adsParams) {
-            dailymotion.createPlayer("player", {
-                video: "x84fxvq",
-                params: {
-                    adsConfig: {
-                        adsParams: adsParams,
-                    },
-                }
-            });
-            console.log("fail >>" + decodeURIComponent(adsParams))
         }
     </script>
 
