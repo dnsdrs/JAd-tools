@@ -58,7 +58,8 @@
             }]
         }
 
-        // Prebid init methods -- are usually already done by display methods -- shouldn't be added if already present
+        // Prebid init methods -- are usually already done by display methods 
+        // -- shouldn't be added if already present
         var pbjs = pbjs || {};
         pbjs.que = pbjs.que || [];
 
@@ -70,7 +71,8 @@
             });
         });
 
-        // Amazon init methods -- are usually already done by display methods -- shouldn't be added if already present
+        // Amazon init methods -- are usually already done by display methods 
+        //-- shouldn't be added if already present
         window.apstag = window.apstag || {
             init: function() {
                 apstag._Q.push(["i", arguments, (new Date).getTime()])
@@ -129,7 +131,8 @@
             return toJoin.join("/");
         }
 
-        // This is most important function that does all the header bidding for a video hb config (timeout, prebid config, amazon config)
+        // This is most important function that does all the header bidding for a 
+        // video hb config (timeout, prebid config, amazon config)
         function prepareVideoHbForPlayer(videoHbConfig, callback) {
             var videoRequestManager = {
                 hbFinished: false,
@@ -143,7 +146,8 @@
                 }
             };
 
-            // Initiate promise - this is what will decide when the process is finished (i.e. when both amazon and prebid are finished or the timeout is reached)
+            // Initiate promise - this is what will decide when the process is finished 
+            // (i.e. when both amazon and prebid are finished or the timeout is reached)
             var videoHeaderBiddingIsFinished, videoHeaderBiddingHasFailed;
 
             var videoHeaderBiddingPromise = new Promise((resolve, reject) => {
@@ -170,7 +174,10 @@
                         appendLog("prebid callback with response : " + videoRequestManager.prebid.custParams)
 
                         if (videoRequestManager.prebid.bidRecieved && videoRequestManager.amazon.bidRecieved) {
-                            videoHeaderBiddingIsFinished([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+                            videoHeaderBiddingIsFinished([
+                                videoRequestManager.prebid.custParams,
+                                videoRequestManager.amazon.custParams
+                            ]);
                         }
                     }
                 });
@@ -189,7 +196,10 @@
                     appendLog("amazon callback with response : " + videoRequestManager.amazon.custParams)
 
                     if (videoRequestManager.prebid.bidRecieved && videoRequestManager.amazon.bidRecieved) {
-                        videoHeaderBiddingIsFinished([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+                        videoHeaderBiddingIsFinished([
+                            videoRequestManager.prebid.custParams,
+                            videoRequestManager.amazon.custParams
+                        ]);
                     }
 
                 }
@@ -199,7 +209,10 @@
             setTimeout(function() {
                 appendLog("timeout reached")
                 if (!videoRequestManager.hbFinished) {
-                    videoHeaderBiddingHasFailed([videoRequestManager.prebid.custParams, videoRequestManager.amazon.custParams]);
+                    videoHeaderBiddingHasFailed([
+                        videoRequestManager.prebid.custParams,
+                        videoRequestManager.amazon.custParams
+                    ]);
                 }
             }, videoHbConfig.failsafeTimeout);
 
@@ -269,7 +282,7 @@
 
     <h1 style="padding: 20px;">Demo - Video header bidding with prebid and amazon</h1>
 
-    <section style="display:flex !important; flex-direction: row !important">
+    <section style="display: grid !important; grid-template-columns: 480px 1fr !important; width:100% !important">
         <div style="width:480px !important; padding:20px;">
             <div id="player" style="aspect-ratio: 16/9; background-color: black; display:flex; justify-content: center; align-items: center;">
                 <div>No player triggered, click below</div>
@@ -337,6 +350,11 @@
         .log {
             word-wrap: break-word;
             padding: 5px 0px;
+        }
+        
+        pre>* {
+            font-family: courier;
+            font-size: 12px;
         }
     </style>
 
