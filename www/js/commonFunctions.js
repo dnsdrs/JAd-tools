@@ -69,7 +69,7 @@ async function buildAllPageSlotsFromLibraryLinkElements(libraryLinkElements) {
         var content = lib.documentElement.querySelector('body').innerText;
         content = content.replace("window.jad=window.jad||{};jad.config=jad.config||{};jad.config.pagesSlots=", "");
         content = content.replace("window.jad = window.jad || {};jad.config = jad.config || {};jad.config.pagesSlots = ", "");
-        var until = content.search(";jad.config.network")
+        var until = content.search(";")
         content = content.substring(0, until)
         content = JSON.parse(content)
         for (key of Object.keys(content)) {
