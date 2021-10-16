@@ -26,21 +26,21 @@ function createBidderCheckerFromFilters(bidderFilter, networkFilter, adunitFilte
                             adUnitData.push(pageStlotName);
                             allUniquePositions.map(position => {
                                 if (typeof pageSlotData[position] == "undefined") {
-                                    adUnitData.push("n/a")
+                                    adUnitData.push({ status: "n/a", data: null })
                                 } else if (typeof pageSlotData[position].prebidConfig == "undefined") {
-                                    adUnitData.push("no hb")
+                                    adUnitData.push({ status: "no hb", data: null })
                                 } else if (typeof pageSlotData[position].prebidConfig.bids == "undefined") {
-                                    adUnitData.push("no hb")
+                                    adUnitData.push({ status: "no hb", data: null })
                                 } else {
                                     var isPresent = false;
                                     for (el of pageSlotData[position].prebidConfig.bids) {
                                         if (el.bidder == bidderFilter) {
-                                            adUnitData.push(true);
+                                            adUnitData.push({ status: true, data: el.params });
                                             isPresent = true;
                                             return
                                         }
                                     }
-                                    if (!isPresent) { adUnitData.push(false) }
+                                    if (!isPresent) { adUnitData.push({ status: false, data: null }) }
                                 }
                             })
                             adUnitsData.push(adUnitData)

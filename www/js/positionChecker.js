@@ -30,19 +30,19 @@ function createPositionCheckerFromFilters(positionFilter, networkFilter, adunitF
                                 adUnitData.push(pageStlotName);
                                 allUniqueBidders.map(bidder => {
                                     if (typeof pageSlotData[positionFilter].prebidConfig == "undefined") {
-                                        adUnitData.push(false)
+                                        adUnitData.push({ status: false, data: null })
                                     } else if (typeof pageSlotData[positionFilter].prebidConfig.bids == "undefined") {
-                                        adUnitData.push(false)
+                                        adUnitData.push({ status: false, data: null })
                                     } else {
                                         var isPresent = false;
                                         for (el of pageSlotData[positionFilter].prebidConfig.bids) {
                                             if (el.bidder == bidder) {
-                                                adUnitData.push(true);
+                                                adUnitData.push({ status: true, data: el.params });
                                                 isPresent = true;
                                                 return
                                             }
                                         }
-                                        if (!isPresent) { adUnitData.push(false) }
+                                        if (!isPresent) { adUnitData.push({ status: false, data: null }) }
                                     }
                                 })
                                 adUnitsData.push(adUnitData)

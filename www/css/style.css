@@ -139,3 +139,32 @@ tbody tr td:first-child {
     align-items: center;
     height: calc(100vh - 76px);
 }
+
+
+/* Tooltip container */
+
+.tooltip {
+    cursor: help;
+}
+
+
+/* Tooltip text */
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto;
+    background-color: rgb(0, 0, 0, .8);
+    color: #fff;
+    text-align: left;
+    padding: 5px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+}
+
+
+/* Show the tooltip text when you mouse over the tooltip container */
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

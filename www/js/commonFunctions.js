@@ -11,16 +11,27 @@ function createTable(tableData) {
 
         rowData.forEach(function(cellData) {
             var cell = document.createElement('td');
-            if (cellData === true) {
+            if (cellData.status === true) {
                 cell.classList.add("green")
-            } else if (cellData === false) {
+            } else if (cellData.status === false) {
                 cell.classList.add("red")
-            } else if (cellData === "n/a") {
+            } else if (cellData.status === "n/a") {
                 cell.classList.add("na")
-            } else if (cellData === "no hb") {
+            } else if (cellData.status === "no hb") {
                 cell.classList.add("no_hb")
             }
-            cell.appendChild(document.createTextNode(cellData));
+            if (typeof cellData.status !== "undefined" && cellData.status === true) {
+                cell.classList.add("tooltip")
+                cell.appendChild(document.createTextNode(cellData.status));
+                var span = document.createElement("span");
+                span.classList.add("tooltiptext")
+                cell.appendChild(span);
+                span.innerText = JSON.stringify(cellData.data, null, '_')
+            } else if (typeof cellData.status !== "undefined" && cellData.status !== true) {
+                cell.appendChild(document.createTextNode(cellData.status));
+            } else {
+                cell.appendChild(document.createTextNode(cellData));
+            }
             row.appendChild(cell);
         });
 
