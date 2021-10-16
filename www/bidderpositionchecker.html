@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAd tools - Bidder checker</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <!-- 32×32 -->
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- 180×180 -->
+    <meta name="theme-color" content="rgb(50, 105, 60)">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        input {
+            width: 300px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="href">
+            <div class="logo"><span class="tools">🧰</span></div>
+        </a>
+
+        <form>
+            <div>
+                <label for="adunitFilter">Ad unit : </label>
+                <input id="adunitFilter" list="adunits">
+                <datalist id="adunits">
+                </datalist>
+            </div>
+            <div>
+                <button type="button" onclick="updateData()">Update</button>
+            </div>
+        </form>
+    </nav>
+
+    <div id="loader">
+        <div class="loaderImg">
+            <svg id="JAd-object" width="330" height="152" viewBox="0 0 330 152" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                <rect id="J-letter-stroke" class="JAd-logo" x="1" y="87" width="25" height="14" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="A-left-stroke" class="JAd-logo JAd-shadow" x="115" y="51" width="25" height="100" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="J-left-stroke" class="JAd-shadow" x="1" y="1" width="25" height="100" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="J-right-stroke" class="JAd-logo JAd-shadow" x="76" y="1" width="25" height="100" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="A-right-stroke" class="JAd-logo JAd-shadow" x="190" y="51" width="25" height="100" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="d-right-stroke" class="JAd-logo" x="304" y="1" width="25" height="100" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="d-other-right-stroke" class="JAd-logo JAd-shadow" x="304" y="100" width="25" height="0" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="J-top-stroke" class="JAd-logo JAd-shadow" x="26" y="1" width="50" height="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="A-letter-stroke" class="JAd-logo" x="140" y="87" width="50" height="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <rect id="A-bottom-stroke" class="JAd-shadow" x="140" y="126" width="50" height="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <g id="J-bottom-circle" class="JAd-logo JAd-shadow empty-ooo filled-ooo one">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M101 101C101 128.614 78.6142 151 51 151C23.3858 151 1 128.614 1 101H26C26 114.807 37.1929 126 51 126C64.8071 126 76 114.807 76 101H101Z" fill="#333333"/>
+                <path d="M101 101H102V100H101V101ZM1 101V100H0V101H1ZM26 101H27V100H26V101ZM76 101V100H75V101H76ZM51 152C79.1665 152 102 129.167 102 101H100C100 128.062 78.062 150 51 150V152ZM0 101C0 129.167 22.8335 152 51 152V150C23.938 150 2 128.062 2 101H0ZM1 102H26V100H1V102ZM25 101C25 115.359 36.6406 127 51 127V125C37.7452 125 27 114.255 27 101H25ZM51 127C65.3594 127 77 115.359 77 101H75C75 114.255 64.2548 125 51 125V127ZM76 102H101V100H76V102Z" fill="#333333"/>
+                </g>
+                <g id="A-top-circle" class="JAd-logo JAd-shadow empty-ooo filled-ooo two">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M215 52C215 24.3858 192.614 2 165 2C137.386 2 115 24.3858 115 52H140C140 38.1929 151.193 27 165 27C178.807 27 190 38.1929 190 52H215Z" fill="#333333"/>
+                <path d="M215 52V53H216V52H215ZM115 52H114V53H115V52ZM140 52V53H141V52H140ZM190 52H189V53H190V52ZM216 52C216 23.8335 193.167 1 165 1V3C192.062 3 214 24.938 214 52H216ZM165 1C136.833 1 114 23.8335 114 52H116C116 24.938 137.938 3 165 3V1ZM140 51H115V53H140V51ZM165 26C150.641 26 139 37.6406 139 52H141C141 38.7452 151.745 28 165 28V26ZM191 52C191 37.6406 179.359 26 165 26V28C178.255 28 189 38.7452 189 52H191ZM215 51H190V53H215V51Z" fill="#333333"/>
+                </g>
+                <g id="d-top-circle" class="JAd-logo JAd-shadow empty-ooo filled-ooo three">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M329 102C329 74.3858 306.614 52 279 52C251.386 52 229 74.3858 229 102H254C254 88.1929 265.193 77 279 77C292.807 77 304 88.1929 304 102H329Z" fill="#333333"/>
+                <path d="M329 102V103H330V102H329ZM229 102H228V103H229V102ZM254 102V103H255V102H254ZM304 102H303V103H304V102ZM330 102C330 73.8335 307.167 51 279 51V53C306.062 53 328 74.938 328 102H330ZM279 51C250.833 51 228 73.8335 228 102H230C230 74.938 251.938 53 279 53V51ZM254 101H229V103H254V101ZM279 76C264.641 76 253 87.6406 253 102H255C255 88.7452 265.745 78 279 78V76ZM305 102C305 87.6406 293.359 76 279 76V78C292.255 78 303 88.7452 303 102H305ZM329 101H304V103H329V101Z" fill="#333333"/>
+                </g>
+                <g id="J-top-circle" class="empty-ooo filled-ooo one">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M101 102C101 74.3858 78.6142 52 51 52C23.3858 52 1 74.3858 1 102H26C26 88.1929 37.1929 77 51 77C64.8071 77 76 88.1929 76 102H101Z" fill="#333333"/>
+                <path d="M101 102V103H102V102H101ZM1 102H0V103H1V102ZM26 102V103H27V102H26ZM76 102H75V103H76V102ZM102 102C102 73.8335 79.1665 51 51 51V53C78.062 53 100 74.938 100 102H102ZM51 51C22.8335 51 0 73.8335 0 102H2C2 74.938 23.938 53 51 53V51ZM26 101H1V103H26V101ZM51 76C36.6406 76 25 87.6406 25 102H27C27 88.7452 37.7452 78 51 78V76ZM77 102C77 87.6406 65.3594 76 51 76V78C64.2548 78 75 88.7452 75 102H77ZM101 101H76V103H101V101Z" fill="#333333"/>
+                </g>
+                <g id="d-bottom-circle" class="JAd-logo JAd-shadow empty-ooo filled-ooo three">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M329 101C329 128.614 306.614 151 279 151C251.386 151 229 128.614 229 101H254C254 114.807 265.193 126 279 126C292.807 126 304 114.807 304 101H329Z" fill="#333333"/>
+                <path d="M329 101H330V100H329V101ZM229 101V100H228V101H229ZM254 101H255V100H254V101ZM304 101V100H303V101H304ZM279 152C307.167 152 330 129.167 330 101H328C328 128.062 306.062 150 279 150V152ZM228 101C228 129.167 250.833 152 279 152V150C251.938 150 230 128.062 230 101H228ZM229 102H254V100H229V102ZM253 101C253 115.359 264.641 127 279 127V125C265.745 125 255 114.255 255 101H253ZM279 127C293.359 127 305 115.359 305 101H303C303 114.255 292.255 125 279 125V127ZM304 102H329V100H304V102Z" fill="#333333"/>
+                </g>
+                <g id="A-bottom-circle" class="empty-ooo filled-ooo two">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M215 51C215 78.6142 192.614 101 165 101C137.386 101 115 78.6142 115 51H140C140 64.8071 151.193 76 165 76C178.807 76 190 64.8071 190 51H215Z" fill="#333333"/>
+                <path d="M215 51H216V50H215V51ZM115 51V50H114V51H115ZM140 51H141V50H140V51ZM190 51V50H189V51H190ZM165 102C193.167 102 216 79.1665 216 51H214C214 78.062 192.062 100 165 100V102ZM114 51C114 79.1665 136.833 102 165 102V100C137.938 100 116 78.062 116 51H114ZM115 52H140V50H115V52ZM139 51C139 65.3594 150.641 77 165 77V75C151.745 75 141 64.2548 141 51H139ZM165 77C179.359 77 191 65.3594 191 51H189C189 64.2548 178.255 75 165 75V77ZM190 52H215V50H190V52Z" fill="#333333"/>
+                </g>
+                <circle id="J-fill-circle" class="filled-ooo" cx="51" cy="102" r="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <circle id="A-fill-circle" class="filled-ooo"cx="165" cy="52" r="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                <circle id="d-fill-circle" class="filled-ooo"cx="279" cy="102" r="25" fill="#333333" stroke="#333333" stroke-width="2"/>
+                </g>
+            </svg>
+
+            <style>
+                * {
+                    --colorlogo: #f0f0f0;
+                }
+                
+                circle {
+                    stroke: var(--colorlogo);
+                    fill: var(--colorlogo);
+                }
+                
+                path {
+                    fill: var(--colorlogo);
+                }
+                
+                rect {
+                    stroke: var(--colorlogo);
+                    fill: var(--colorlogo);
+                }
+                
+                #JAd-object {
+                    width: 100px;
+                    height: auto;
+                    top: 10px;
+                    visibility: hidden;
+                }
+                
+                .empty-ooo {
+                    visibility: visible;
+                }
+                
+                .one,
+                .three {
+                    animation: updown 0.5s ease 0s 6 alternate;
+                }
+                
+                .two {
+                    animation: downup 0.5s ease 0s 6 alternate;
+                }
+                
+                @keyframes updown {
+                    0% {
+                        transform: translateY(0px);
+                    }
+                    100% {
+                        transform: translateY(-0.5in);
+                    }
+                }
+                
+                @keyframes downup {
+                    0% {
+                        transform: translateY(0px)
+                    }
+                    100% {
+                        transform: translateY(0.5in);
+                    }
+                }
+                
+                #A-bottom-circle {
+                    animation: aturn 0.25s forwards 3s 1 normal, downup 0.5s ease 0s 6 alternate;
+                    transform-origin: 165px 52px;
+                }
+                
+                @keyframes aturn {
+                    from {
+                        transform: rotateZ(0deg);
+                    }
+                    to {
+                        transform: rotateZ(180deg);
+                        visibility: hidden;
+                    }
+                }
+                
+                #A-right-stroke {
+                    animation: 0.25s forwards 3.25s 1 normal arightmove;
+                }
+                
+                @keyframes arightmove {
+                    from {
+                        visibility: visible;
+                        height: 0px;
+                        top: 90px
+                    }
+                    to {
+                        visibility: visible;
+                        height: 100px;
+                        top: 190px
+                    }
+                }
+                
+                #A-bottom-stroke {
+                    animation: abottommove 0.25s forwards 3.5s, amove 1s forwards 4s;
+                }
+                
+                @keyframes abottommove {
+                    from {
+                        visibility: visible;
+                        width: 0px;
+                        x: 190px
+                    }
+                    to {
+                        visibility: visible;
+                        width: 50px;
+                        x: 140px
+                    }
+                }
+                
+                #A-left-stroke {
+                    animation: 0.25s forwards 3.75s 1 normal aleftmove;
+                }
+                
+                @keyframes aleftmove {
+                    from {
+                        visibility: visible;
+                        height: 0px;
+                        y: 190px
+                    }
+                    to {
+                        visibility: visible;
+                        height: 190px;
+                        y: 50px
+                    }
+                }
+                
+                #J-top-circle {
+                    animation: aturn 0.25s forwards 3s 1 normal, updown 0.5s ease 0s 6 alternate;
+                    transform-origin: 51px 101.5px;
+                }
+                
+                @keyframes aturn {
+                    from {
+                        transform: rotateZ(0deg);
+                    }
+                    to {
+                        transform: rotateZ(180deg);
+                        visibility: hidden;
+                    }
+                }
+                
+                #J-left-stroke {
+                    animation: jleftmove 0.25s forwards 3.25s, jmove 1s forwards 4s;
+                }
+                
+                @keyframes jleftmove {
+                    from {
+                        visibility: visible;
+                        height: 0px;
+                        y: 100px
+                    }
+                    to {
+                        visibility: visible;
+                        height: 100px;
+                        y: 1px
+                    }
+                }
+                
+                #J-top-stroke {
+                    animation: 0.25s forwards 3.5s 1 normal jtopmove;
+                }
+                
+                @keyframes jtopmove {
+                    from {
+                        visibility: visible;
+                        width: 0px;
+                    }
+                    to {
+                        visibility: visible;
+                        width: 50px;
+                    }
+                }
+                
+                #J-right-stroke {
+                    animation: 0.25s forwards 3.75s 1 normal jrightmove;
+                }
+                
+                @keyframes jrightmove {
+                    from {
+                        visibility: visible;
+                        height: 0px
+                    }
+                    to {
+                        visibility: visible;
+                        height: 100px
+                    }
+                }
+                
+                @keyframes jmove {
+                    from {
+                        y: 1px;
+                        height: 100px
+                    }
+                    to {
+                        y: 87px;
+                        height: 14px
+                    }
+                }
+                
+                @keyframes amove {
+                    from {
+                        y: 126px;
+                    }
+                    to {
+                        y: 87px;
+                    }
+                }
+                
+                #d-right-stroke {
+                    animation: 1s forwards 4s dmove
+                }
+                
+                @keyframes dmove {
+                    from {
+                        visibility: visible;
+                        y: 100px;
+                        height: 0px;
+                    }
+                    to {
+                        visibility: visible;
+                        y: 0px;
+                        height: 100px;
+                    }
+                }
+                /*
+                .empty-ooo 
+                .filled-ooo
+                .JAd-logo 
+                .JAd-shadow    
+                */
+            </style>
+        </div>
+        <div id="loaderText">loading...</div>
+    </div>
+
+    <script src="js/commonFunctions.js"></script>
+    <script src="js/bidderPositionChecker.js"></script>
+</body>
+
+</html>
