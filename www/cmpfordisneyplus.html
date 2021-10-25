@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP for DisneyPlus</title>
+</head>
+
+<body style="height: 100vh;">
+
+    <div class="container" style="display:flex; justify-content: center; align-items: center; height: 100%; flex-direction: column;">
+        <button class="openCmp">open cmp</button>
+        <button class="resetConsent">reset consent</button>
+        <button class="testEvent">test event</button>
+    </div>
+
+    <div class="cmp_notice">
+        <div class="cmp_text"></div>
+        <div class="cmp_buttons">
+            <button class="cmp_refuse cmp_button"></button>
+            <button class="cmp_accept cmp_button"></button>
+        </div>
+    </div>
+
+    <script>
+        var cmp = {
+            currentLanguage: 'fr',
+            htmlElements: {
+                notice: document.querySelector(".cmp_notice"),
+                text: document.querySelector(".cmp_text"),
+                accept: document.querySelector(".cmp_button.cmp_accept"),
+                refuse: document.querySelector(".cmp_refuse.cmp_refuse"),
+            },
+            translations: {
+                fr: {
+                    text: "Nous utilisons des cookies pour mieux comprendre votre comportement en ligne, améliorer nos services, communiquer avec vous, personnaliser le contenu ou la publicité sur nos plateformes et vous offrir des fonctionnalités liées aux médias sociaux. Pour en savoir plus, suivez <a href='#' class='cmp_link'>ce lien</a>",
+                    link: "https://privacy.thewaltdisneycompany.com/fr/regles-de-respect-de-la-vie-privee/quest-ce-quun-cookie/",
+                    accept: "TOUT ACCEPTER",
+                    refuse: "TOUT BLOQUER"
+                },
+                en: {
+                    text: "we use cookies. Read more on <a href='#' class='cmp_link'>this link</a>",
+                    link: "https://privacy.thewaltdisneycompany.com/fr/regles-de-respect-de-la-vie-privee/quest-ce-quun-cookie/",
+                    accept: "ACCEPT ALL",
+                    refuse: "BLOCK ALL"
+                }
+            },
+            triggerOnConsent: new Promise((resolve, reject) => {
+                consentIsResolved = resolve
+            }),
+            reset: function() {
+                cmp.htmlElements.notice.classList.add("cmp_active")
+                cmp.setCookie("consent", "undefined", -1)
+                window.location.reload()
+            },
+            open: function() {
+                cmp.htmlElements.notice.classList.add("cmp_active")
+            },
+            accept: function() {
+                cmp.consentStatus = true;
+                cmp.htmlElements.notice.classList.remove("cmp_active")
+                cmp.setCookie("consent", true, 180)
+                consentIsResolved()
+            },
+            refuse: function() {
+                cmp.consentStatus = false;
+                cmp.htmlElements.notice.classList.remove("cmp_active")
+                cmp.setCookie("consent", false, 180)
+            },
+            setLanguage: function(language) {
+                cmp.currentLanguage = language;
+                cmp.htmlElements.text.innerHTML = cmp.translations[cmp.currentLanguage].text
+                cmp.htmlElements.link = document.querySelector(".cmp_link")
+                cmp.htmlElements.link.href = cmp.translations[cmp.currentLanguage].link
+                cmp.htmlElements.accept.innerText = cmp.translations[cmp.currentLanguage].accept
+                cmp.htmlElements.refuse.innerText = cmp.translations[cmp.currentLanguage].refuse
+            },
+            getConsent: function() {
+                if (cmp.getCookie("consent") == 'true') {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            getCookie: function(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            },
+            setCookie: function setCookie(cname, cvalue, exdays) {
+                const d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            },
+            toTriggerOnConsent: [],
+            init: function() {
+                cmp.htmlElements.text.innerHTML = cmp.translations[cmp.currentLanguage].text
+                cmp.htmlElements.link = document.querySelector(".cmp_link")
+                cmp.htmlElements.link.href = cmp.translations[cmp.currentLanguage].link
+                cmp.htmlElements.accept.innerText = cmp.translations[cmp.currentLanguage].accept
+                cmp.htmlElements.refuse.innerText = cmp.translations[cmp.currentLanguage].refuse
+                if (cmp.getCookie("consent") == 'undefined' || cmp.getCookie("consent") == '') {
+                    cmp.htmlElements.notice.classList.add("cmp_active")
+                } else if (cmp.getConsent()) {
+                    consentIsResolved()
+                }
+                cmp.htmlElements.accept.addEventListener("click", function() {
+                    cmp.accept()
+
+                })
+                cmp.htmlElements.refuse.addEventListener("click", function() {
+                    cmp.refuse()
+                })
+                cmp.triggerOnConsent
+                    .then(
+                        function() {
+                            while (cmp.toTriggerOnConsent.length > 0) {
+                                cmp.toTriggerOnConsent.shift().apply();
+                            }
+                        }
+                    );
+            }
+        }
+
+        cmp.init()
+
+        cmp.toTriggerOnConsent.push(function() {
+            triggerGoogleAnalytics()
+        })
+        cmp.toTriggerOnConsent.push(function() {
+            triggerOtherStuff()
+        })
+
+        // FOR TESTING
+
+        function triggerGoogleAnalytics() {
+            console.log("Google Analytics triggered")
+        }
+
+        function triggerOtherStuff() {
+            console.log("Other stuff triggered")
+        }
+
+        console.log('consent is ' + cmp.getConsent())
+        console.log('consent is given ' + !(cmp.getCookie("consent") == '' || cmp.getCookie("consent") == 'undefined'))
+
+
+        var openCmp = document.querySelector(".openCmp")
+        var testEvent = document.querySelector(".testEvent")
+        var resetConsent = document.querySelector(".resetConsent")
+
+        openCmp.addEventListener("click", function() {
+            cmp.open()
+        })
+
+        resetConsent.addEventListener("click", function() {
+            cmp.reset();
+        })
+
+        testEvent.addEventListener("click", function() {
+            if (cmp.getConsent() == true) {
+                console.log("consent is true => event fired ")
+            } else {
+                console.log("consent is false => event NOT fired ")
+            }
+        })
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            border: 0px;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .cmp_notice {
+            display: none;
+            position: absolute;
+            background-color: #353744;
+            width: 292px;
+            bottom: 0px;
+            right: 0px;
+            color: #F9F9F9;
+            margin: 16px;
+            font-family: Avenir;
+            font-size: 12px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cmp_text {
+            line-height: 18px;
+            padding: 0px 16px 8px 16px;
+        }
+        
+        .cmp_buttons {
+            margin: 10px 12px 10px 12px;
+            width: 260px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cmp_button {
+            background-color: rgba(249, 249, 249, 0.1);
+            width: 100%;
+            height: 35px;
+            border: none;
+            color: #F9F9F9;
+            margin: 5px 0px;
+            border-radius: 4px;
+            font-size: 12px;
+            letter-spacing: 1.1px;
+            font-weight: 500;
+            font-family: Avenir;
+            cursor: pointer;
+        }
+        
+        .cmp_link {
+            color: #1276CE;
+            font-weight: bold;
+        }
+        
+        .cmp_active {
+            display: block;
+        }
+        
+        @media (max-width: 1000px) {
+            .cmp_notice {
+                position: absolute;
+                width: 100%;
+                top: 0px;
+                bottom: unset;
+                right: unset;
+                margin: 0px;
+            }
+            .cmp_buttons {
+                flex-direction: row;
+                justify-content: space-between;
+                width: unset;
+                margin-inline: 16px;
+            }
+            .cmp_button {
+                width: 49%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cmp_notice {
+                position: absolute;
+                width: 100%;
+                top: 0px;
+                bottom: unset;
+                right: unset;
+                margin: 0px;
+            }
+            .cmp_buttons {
+                flex-direction: column;
+                width: unset;
+            }
+            .cmp_button {
+                width: unset;
+            }
+        }
+    </style>
+
+</body>
+
+</html>
