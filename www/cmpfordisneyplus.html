@@ -8,9 +8,9 @@
     <title>CMP for DisneyPlus</title>
 </head>
 
-<body style="height: 100vh;">
+<body>
 
-    <div class="container" style="display:flex; justify-content: center; align-items: center; height: 100%; flex-direction: column;">
+    <div class="container" style="">
         <button class="openCmp">open cmp</button>
         <button class="resetConsent">reset consent</button>
         <button class="testEvent">test event</button>
@@ -190,44 +190,43 @@
         .cmp_notice {
             display: none;
             position: absolute;
-            background-color: #353744;
-            width: 292px;
             bottom: 0px;
             right: 0px;
-            color: #F9F9F9;
+            width: 292px;
             margin: 16px;
-            font-family: Avenir;
-            font-size: 12px;
             padding-top: 16px;
             padding-bottom: 16px;
             box-shadow: 0 0 18px rgba(0, 0, 0, 0.2);
+            background-color: #353744;
+            color: #F9F9F9;
+            font-family: Avenir;
+            font-size: 12px;
         }
         
         .cmp_text {
-            line-height: 18px;
             padding: 0px 16px 8px 16px;
+            line-height: 18px;
         }
         
         .cmp_buttons {
-            margin: 10px 12px 10px 12px;
-            width: 260px;
-            margin: auto;
             display: flex;
             flex-direction: column;
+            width: 260px;
+            margin: auto;
         }
         
         .cmp_button {
-            background-color: rgba(249, 249, 249, 0.1);
             width: 100%;
             height: 35px;
-            border: none;
-            color: #F9F9F9;
             margin: 5px 0px;
+            border: none;
             border-radius: 4px;
-            font-size: 12px;
-            letter-spacing: 1.1px;
-            font-weight: 500;
+            background-color: rgba(249, 249, 249, 0.1);
+            color: #F9F9F9;
             font-family: Avenir;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1.1px;
             cursor: pointer;
         }
         
@@ -243,10 +242,10 @@
         @media (max-width: 1000px) {
             .cmp_notice {
                 position: absolute;
-                width: 100%;
                 top: 0px;
                 bottom: unset;
                 right: unset;
+                width: 100%;
                 margin: 0px;
             }
             .cmp_buttons {
@@ -263,10 +262,10 @@
         @media (max-width: 480px) {
             .cmp_notice {
                 position: absolute;
-                width: 100%;
                 top: 0px;
                 bottom: unset;
                 right: unset;
+                width: 100%;
                 margin: 0px;
             }
             .cmp_buttons {
@@ -276,6 +275,26 @@
             .cmp_button {
                 width: unset;
             }
+        }
+        /* FOR TESTING */
+        
+        body {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            padding: 10px
+        }
+        
+        .openCmp,
+        .resetConsent,
+        .testEvent {
+            cursor: pointer;
+            padding: 5px;
+            margin: 2px;
+            border: solid 1px #CCC;
+            border-radius: 4px;
         }
     </style>
 
