@@ -15,7 +15,7 @@
         <button class="openMicroCmp">open cmp</button>
         <button class="resetConsent">reset consent</button>
         <button class="testEvent">test event</button>
-        <button class="toFrench">to french</button>
+        <button class="toGerman">to german</button>
     </div>
 
     <div class="microCmp_notice">
@@ -34,7 +34,7 @@
             refuse: "ALLES BLOCKIEREN"
         })
 
-        microCmp.setLanguage('de')
+        microCmp.setLanguage('fr')
 
         microCmp.init()
 
@@ -62,7 +62,7 @@
         var openMicroCmp = document.querySelector(".openMicroCmp")
         var testEvent = document.querySelector(".testEvent")
         var resetConsent = document.querySelector(".resetConsent")
-        var toFrench = document.querySelector(".toFrench")
+        var toGerman = document.querySelector(".toGerman")
 
         openMicroCmp.addEventListener("click", function() {
             microCmp.open()
@@ -72,9 +72,8 @@
             microCmp.reset();
         })
 
-        toFrench.addEventListener("click", function() {
-            microCmp.setLanguage('fr');
-            microCmp.init()
+        toGerman.addEventListener("click", function() {
+            microCmp.setLanguage('de');
         })
 
         testEvent.addEventListener("click", function() {
@@ -195,7 +194,7 @@
         .openMicroCmp,
         .resetConsent,
         .testEvent,
-        .toFrench {
+        .toGerman {
             cursor: pointer;
             padding: 5px;
             margin: 2px;
