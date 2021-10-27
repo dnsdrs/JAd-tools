@@ -47,6 +47,7 @@ var microCmp = {
     },
     setLanguage: function(language) {
         microCmp.currentLanguage = language;
+        microCmp.init()
     },
     getConsent: function() {
         if (microCmp.getCookie("consent") == 'true') {
