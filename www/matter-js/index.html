@@ -9,6 +9,16 @@
     <script src="./matter.js"></script>
 </head>
 
+<style>
+    * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        overflow: hidden;
+    }
+</style>
+
 <body>
 
     <script>
@@ -32,10 +42,10 @@
             element: document.body,
             engine: engine,
             options: {
-                width: 1200,
-                height: 600,
-                showAngleIndicator: false,
-                wireframes: false
+                width: window.innerWidth,
+                height: window.innerHeight,
+                wireframes: false,
+                background: 'transparent',
             }
         });
 
@@ -50,13 +60,21 @@
             });
         })
 
-        var ground = Bodies.rectangle(400, 610, 810, 60, {
+        var borderThickness = 30;
+        var borderOptions = {
+            render: {
+                fillStyle: "red",
+            },
             isStatic: true
-        });
+        };
+
+        var topBar = Bodies.rectangle(window.innerWidth / 2, borderThickness / 2, window.innerWidth, borderThickness, borderOptions);
+        var bottom = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - (borderThickness / 2), window.innerWidth, borderThickness, borderOptions);
+        var left = Bodies.rectangle(borderThickness / 2, window.innerHeight / 2, borderThickness, window.innerHeight, borderOptions);
+        var right = Bodies.rectangle(window.innerWidth - (borderThickness / 2), window.innerHeight / 2, borderThickness, window.innerHeight, borderOptions);
 
         Composite.add(world, [
-            stack,
-            ground
+            stack, topBar, bottom, left, right
         ]);
 
 
@@ -89,7 +107,7 @@
             mouseConstraint = MouseConstraint.create(engine, {
                 mouse: mouse,
                 constraint: {
-                    stiffness: 0.09,
+                    stiffness: 0.2,
                     render: {
                         visible: false
                     }
@@ -100,17 +118,6 @@
 
         // keep the mouse in sync with rendering
         render.mouse = mouse;
-
-        Render.lookAt(render, {
-            min: {
-                x: 0,
-                y: 0
-            },
-            max: {
-                x: 800,
-                y: 600
-            }
-        });
 
         // run the renderer
         Render.run(render);
