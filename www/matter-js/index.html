@@ -17,6 +17,7 @@
             Render = Matter.Render,
             Runner = Matter.Runner,
             Bodies = Matter.Bodies,
+            Common = Matter.Common,
             Composites = Matter.Composites,
             Composite = Matter.Composite,
             Mouse = Matter.Mouse,
@@ -99,6 +100,17 @@
 
         // keep the mouse in sync with rendering
         render.mouse = mouse;
+
+        Render.lookAt(render, {
+            min: {
+                x: 0,
+                y: 0
+            },
+            max: {
+                x: 800,
+                y: 600
+            }
+        });
 
         // run the renderer
         Render.run(render);
