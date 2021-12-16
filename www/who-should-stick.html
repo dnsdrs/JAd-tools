@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src='http://p.jwpcdn.com/player/v/7.10.0-beta.1/jwplayer.js'></script>
+</head>
+
+<body>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0px;
+            border: 0px;
+            font-family: Arial;
+        }
+        
+        body {
+            max-width: 800px;
+        }
+        
+        nav {
+            background-color: #004365;
+            height: 54px;
+            width: 100%;
+            position: fixed;
+            top: 0px;
+            z-index: 1000;
+        }
+        
+        #nav-icon {
+            position: fixed;
+            width: 38px;
+            height: 54px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #nav-hamburger {
+            position: fixed;
+            width: 25px;
+            height: 20px;
+            background-color: #ffffff;
+        }
+        
+        #nav-hamburger::before {
+            position: absolute;
+            width: 100%;
+            height: 20%;
+            top: 60%;
+            background-color: #004365;
+            content: "";
+        }
+        
+        #nav-hamburger::after {
+            position: absolute;
+            width: 100%;
+            height: 20%;
+            top: 20%;
+            background-color: #004365;
+            content: "";
+        }
+        
+        #header-wrapper {
+            position: absolute;
+            height: calc(750px + 54px);
+            width: 100%;
+            top: 54px;
+            display: flex;
+        }
+        
+        #header-position {
+            width: 100%;
+            top: 54px;
+            height: 120px;
+        }
+        
+        #header {
+            width: 100%;
+            position: sticky;
+            top: 54px;
+            height: 120px;
+            background-color: red;
+            z-index: 100;
+        }
+        
+        #content {
+            position: absolute;
+            top: calc(120px + 54px);
+            width: 100%;
+            z-index: 0;
+        }
+        
+        #game-header-banner {
+            width: 100%;
+            background-color: black;
+            color: white;
+        }
+        
+        #actu {
+            width: 100%;
+            background-color: orange;
+        }
+        
+        .fil-ariane-crumb {
+            color: #aaa;
+            font-size: 0.75rem;
+            line-height: 1.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: Arial, Helvetica, sans-serif;
+            padding-left: 0.0625rem;
+        }
+        
+        p {
+            margin: 10px;
+        }
+        
+        h1 {
+            margin: 10px;
+        }
+        
+        #player-placeholder {
+            height: calc(((9 / 16) * 100vw) + 20px);
+            width: 100%;
+        }
+        
+        #player-container {
+            position: static;
+            transition: all 0.5s ease;
+        }
+        
+        .sticky-player {
+            position: fixed !important;
+            width: 100% !important;
+            height: auto;
+            top: 54px !important;
+            z-index: 100000;
+            margin: 0px 0px !important;
+            border: 0px;
+            padding: 0px;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 100%;
+        }
+        
+        #pulse {
+            width: 100%;
+            position: fixed;
+            bottom: 0px;
+            height: 72px;
+            background-color: rgb(83, 83, 204);
+            transition: margin-bottom 0.5s ease-out 0s;
+        }
+        
+        #pulse_placeholder {
+            width: 100%;
+            bottom: 0px;
+            height: 115px;
+        }
+        
+        .text {
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .display-ad {
+            height: 350px;
+            overflow: hidden;
+            padding: 20px 0;
+            background-color: #f7f7f7;
+        }
+        
+        .display-ad-container {
+            width: 300px;
+            height: 310px;
+            position: relative;
+            overflow: hidden;
+            margin: 0px auto;
+            box-sizing: content-box;
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .display-ad-hole {
+            margin: 0px;
+            padding: 0px;
+            clip: rect(0px, auto, 310px, 0px);
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            box-sizing: border-box;
+            display: block;
+        }
+        
+        .display-ad-content {
+            width: 300px;
+            height: 600px;
+            background-color: steelblue;
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            margin: auto;
+            z-index: 0;
+        }
+        
+        .hide-pulse {
+            margin-bottom: -72px;
+        }
+    </style>
+
+    <nav>
+        <span id="nav-icon">
+            <span id="nav-hamburger"></span>
+        </span>
+    </nav>
+    <div id="sticky-player"></div>
+    <main>
+        <div id="header-position"></div>
+        <div id="header-wrapper">
+            <div id="header" class="text">
+                <div class="text">Publicité<br>position=header</div>
+            </div>
+        </div>
+        <div id="content">
+            <div id="game-header-banner">
+                <h1>Nom du jeu</h1>
+                <p>Tout support / PC / PS4 / PS5 / ONE / Xbox Series / Stadia</p>
+                <p>liens de partage</p>
+            </div>
+            <div id="actu">
+                <h1>Actu</h1>
+            </div>
+            <div class="fil-ariane-crumb">
+                <span>
+                    jeuxvideo.com
+                </span> /
+                <span>
+                    Dernières actualités des jeux vidéo
+                </span> /
+                <span>
+                    News jeux vidéo
+                </span> /
+                <span>
+                    Soluce jeux
+                </span> /
+                <span>Resident Evil 7 gratuit avec la PlayStation Plus Collection : retrouvez notre soluce complète et tous nos guides</span>
+            </div>
+            <p>Précédent / Dernières news</p>
+            <h1>Who should stick and when?</h1>
+            <div id="player-placeholder">
+                <div id="player-container">
+                    <div id="jwPlayer"></div>
+                </div>
+            </div>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <div class="display-ad">
+                <div class="display-ad-container">
+                    <div class="display-ad-hole">
+                        <div class="display-ad-content text">
+                            <div class="text">Publicité<br>position=rectangle_atf</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <div class="display-ad">
+                <div class="display-ad-container">
+                    <div class="display-ad-hole">
+                        <div class="display-ad-content text">
+                            <div class="text">Publicité<br>position=rectangle_mtf</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <div class="display-ad">
+                <div class="display-ad-container">
+                    <div class="display-ad-hole">
+                        <div class="display-ad-content text">
+                            <div class="text">Publicité<br>position=rectangle_btf</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis cumque eius et possimus! Ducimus unde esse expedita exercitationem omnis voluptatem dolorem molestias consectetur praesentium libero et, aliquid reiciendis ullam illum!</p>
+            <div id="pulse_placeholder"></div>
+        </div>
+        <div id="pulse" class="text hide-pulse">
+            <div class="text">emergence banner</div>
+        </div>
+    </main>
+    <script>
+        jwplayer.key = "7B8XLFFnNEDfONLx9wEqBHsg5/yP9drioHdgMA==";
+        jwplayer('jwPlayer').setup({
+            file: "http://content.jwplatform.com/videos/q1fx20VZ-640.mp4",
+            image: "http://content.jwplatform.com/thumbs/q1fx20VZ-640.jpg",
+            primary: "flash",
+            autostart: true,
+            width: "100%",
+            aspectratio: "16:9",
+            mute: true
+        });
+
+        function getPos(el) {
+            for (var ly = 0; el != null; ly += el.offsetTop, el = el.offsetParent);
+            return ly;
+        }
+
+        var player = document.getElementById('jwPlayer');
+        var posJWP = getPos(player);
+        var headerWrapper = document.getElementById("header-wrapper");
+        var headerWrapperInitialHeight = getComputedStyle(headerWrapper).height;
+        headerWrapperInitialHeight = parseInt(headerWrapperInitialHeight, 10);
+        headerWrapperWishedHeight = Math.min(headerWrapperInitialHeight, posJWP);
+        headerWrapper.setAttribute("style", "height:" + (headerWrapperWishedHeight - 54) + "px !important;");
+
+        var playerContainer = document.getElementById("player-container");
+
+        document.addEventListener("scroll", function() {
+            if (scrollY > (posJWP - 54)) {
+                playerContainer.classList.add("sticky-player");
+                headerWrapper.style.height = "120px";
+            } else {
+                playerContainer.classList.remove("sticky-player");
+                headerWrapper.setAttribute("style", "height:" + (headerWrapperWishedHeight - 54) + "px !important;");
+            }
+        });
+
+        var pulse = document.getElementById("pulse");
+        var pulseText = pulse.childNodes[0];
+        var eventClickPulse = pulse.addEventListener("click", function() {
+            pulse.classList.toggle("hide-pulse");
+            pulse.style.marginBottom = "-72px !important"
+        })
+
+        var lastScrollPosition;
+
+        document.addEventListener("scroll", function(e) {
+
+            if (window.scrollY < lastScrollPosition) {
+                pulse.classList.remove("hide-pulse");
+            } else {
+                pulse.classList.add("hide-pulse")
+            }
+            lastScrollPosition = window.scrollY
+        })
+    </script>
+</body>
+
+</html>
