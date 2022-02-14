@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+
+    "name": "New tab - audience revenue",
+    "description": "This extension overrides the new tab by audience revenue data from Webedia",
+    "browser_action": {
+        "default_icon": "icon48.png"
+    },
+    "icons": {
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
+    "version": "1.0",
+    "chrome_url_overrides": {
+        "newtab": "new-tab.html"
+    },
+    "permissions": ["identity", "identity.email"]
+}
