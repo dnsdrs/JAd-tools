@@ -139,7 +139,7 @@ table {
 
 @font-face {
   font-family: "SF Pro";
-  src: url("https://www.apple.com/wss/fonts/SF-Pro-Text/v3/sf-pro-text_regular.woff2") format("woff2");
+  src: url("../fonts/sf-pro-text_regular.woff2") format("woff2");
 }
 body {
   font-size: 20px;
@@ -153,10 +153,12 @@ header {
   width: 100%;
   position: fixed;
   top: 0px;
+  z-index: 10;
 }
 
 main {
-  margin-top: 80px;
+  max-width: 100vw;
+  margin-top: 230px;
 }
 main > * {
   padding-inline: 20px;
@@ -164,6 +166,56 @@ main > * {
 }
 main h1 {
   font-weight: 600;
+  font-size: 25px;
+}
+main .header_video_ad {
+  padding: 0px;
+  height: 150px;
+  width: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 60px;
+  transition: margin-top 200 ease;
+}
+main .header_video_ad.unsticked {
+  margin-top: -150px;
+}
+main .header_video_ad video {
+  height: auto;
+  width: 50%;
+  max-height: 150px;
+}
+main .header_video_ad .header_video_ad_text_container {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+main .header_video_ad .header_video_ad_text_container .header_video_ad_title {
+  font-size: min(6vw, 22px);
+  color: white;
+}
+main .header_video_ad .header_video_ad_text_container .header_video_ad_subtitle {
+  font-size: min(4vw, 17px);
+  margin-bottom: 10px;
+  text-align: center;
+  color: white;
+}
+main .header_video_ad .header_video_ad_text_container .header_video_ad_ctas {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+main .header_video_ad .header_video_ad_text_container .header_video_ad_ctas .header_video_ad_cta {
+  font-size: min(3vw, 17px);
+  color: #0066CC;
 }
 main .scroll_ad {
   border: 1px solid #d9d7dd;
@@ -282,4 +334,7 @@ main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container
 main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container .custom_pulse_ad_ctas .custom_pulse_ad_cta {
   font-size: min(3vw, 17px);
   color: #0066CC;
+}
+main .custom_pulse_ad.hidden {
+  opacity: 0;
 }/*# sourceMappingURL=style.css.map */
