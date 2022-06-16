@@ -44,14 +44,14 @@ var element = document.querySelector(".test")
 
 
 function handleOrientation(evt) {
-    let x = parseInt(evt.gamma / 2) + "px";
-    let y = parseInt(evt.beta/ 2) + "px";
-    let z = ((Math.abs(evt.gamma) + Math.abs(evt.beta) + 8) / 3) + "px";    
-    element.style.setProperty('--z', z);
+    var x = -1 * (evt.gamma / 90) * 0.1 * window.innerWidth
+    var y = -1 * ((Math.abs(evt.beta)-90)/90) * 275
+    x = Math.floor(x * 1000) / 1000 + "px"
+    y = Math.floor(y * 1000) / 1000 + "px"
+    console.log({ x:  x, y: y})
+    console.log({ gamma:  evt.gamma, beta: evt.beta})
     element.style.setProperty('--x', x);
     element.style.setProperty('--y', y);
-    element.style.setProperty('--alpha', ((((180-Math.abs(evt.alpha-180))*((evt.alpha-180)/Math.abs(evt.alpha-180)))/180)) * 0.2 * window.innerWidth + "px");
-    element.style.setProperty('--beta', (((((180-Math.abs(evt.beta-180))*((evt.beta-180)/Math.abs(evt.beta-180)))/180)) + 0.5) * 275 + "px");
 
 }
   
