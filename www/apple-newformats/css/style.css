@@ -244,7 +244,7 @@ main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_img {
   top: 0px;
   height: 150px;
   width: 100vw;
-  background-image: url("/img/custom_pulse_ad_background.png");
+  background-image: url("../img/custom_pulse_ad_background.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: 0px 0px;
