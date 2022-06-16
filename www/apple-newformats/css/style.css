@@ -1,0 +1,285 @@
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("https://www.apple.com/wss/fonts/SF-Pro-Text/v3/sf-pro-text_regular.woff2") format("woff2");
+}
+body {
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.25;
+}
+
+header {
+  background-color: lightgray;
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+}
+
+main {
+  margin-top: 80px;
+}
+main > * {
+  padding-inline: 20px;
+  margin-bottom: 30px;
+}
+main h1 {
+  font-weight: 600;
+}
+main .scroll_ad {
+  border: 1px solid #d9d7dd;
+  background: #f6f5f8;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 3px;
+  margin-bottom: 30px;
+  font-family: "SF Pro";
+  padding-inline: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+main .scroll_ad .scroll_ad_title {
+  font-size: 22px;
+}
+main .scroll_ad .scroll_ad_subtitle {
+  font-size: 17px;
+}
+main .scroll_ad .scroll_ad_video {
+  width: 100%;
+}
+main .scroll_ad .scroll_ad_ctas {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+main .scroll_ad .scroll_ad_ctas .scroll_ad_cta {
+  font-size: 17px;
+  color: #0066CC;
+}
+main .test-accelero {
+  height: 600px;
+  background: lightgreen;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+main .test-accelero .test {
+  --x: 0px;
+  --y: 4px;
+  --z: 8px;
+  --alpha: "0%";
+  --beta: "0%";
+  height: 50px;
+  width: 80%;
+  background: teal;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  box-shadow: var(--x) var(--y) var(--z) rgba(0, 0, 0, 0.12);
+  transform: translate(var(--alpha), var(--beta));
+}
+main .custom_pulse_ad {
+  font-family: "SF Pro";
+  position: fixed;
+  margin-bottom: 0px;
+  bottom: 0px;
+  width: 100%;
+  height: 150px;
+  padding: 0px;
+}
+main .custom_pulse_ad .custom_pulse_ad_container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_img {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 150px;
+  width: 100vw;
+  background-image: url("/img/custom_pulse_ad_background.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  z-index: 2;
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container {
+  box-shadow: 0px 11px 19px 5px #000000;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  height: 100px;
+  width: calc(100vw - 90px);
+  background: #f6f5f8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 70px;
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container .custom_pulse_ad_title {
+  font-size: min(6vw, 22px);
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container .custom_pulse_ad_subtitle {
+  font-size: min(4vw, 17px);
+  margin-bottom: 10px;
+  text-align: center;
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container .custom_pulse_ad_ctas {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+main .custom_pulse_ad .custom_pulse_ad_container .custom_pulse_ad_text_container .custom_pulse_ad_ctas .custom_pulse_ad_cta {
+  font-size: min(3vw, 17px);
+  color: #0066CC;
+}/*# sourceMappingURL=style.css.map */
