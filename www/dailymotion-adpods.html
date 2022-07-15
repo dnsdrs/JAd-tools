@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <script src="https://geo.dailymotion.com/libs/player/x7iwu.js"></script>
 </head>
-<body>
+<body class=" mt-5">
   <div class="container">
     <h2 class="text-center">Teste Player</h2>
     <div class="row">
@@ -24,21 +24,60 @@
       </div>
     </div>
   </div>
+  <div class="fixed-top shadow-sm bg-white d-flex flex-column-reverse align-item-center">
+    <button type="button" data-toggle="collapse" class="btn btn-primary shadow-sm" data-target="#dailymotion-form" aria-expanded="false" aria-controls="dailymotion-form">Change Dailymotion parameters</button>
+    <div id="dailymotion-form" class="collapse">
+      <div class="card card-body shadow-sm">
+        <form action="">
+          <div class="form-group">
+            <label for="iu">iu</label>
+            <input class="form-control" name="iu" type="text" placeholder="/21636860837/PurePeople/Instream/Content/Site" value="/21636860837/PurePeople/Instream/Content/Site"></input>
+          </div>
+
+          <div class="form-group">
+            <label for="cust_params">cust_params</label>
+            <input class="form-control" name="cust_params" type="text" placeholder="ad=teste" value="ad=teste"></input>
+          </div>
+
+          <div class="form-group">
+            <label for="additional_vast_params">Additional VAST parameters</label>
+            <input class="form-control" name="additional_vast_params" type="text" placeholder="pmnd=0&pmxd=60000&pmad=2" value="pmnd=0&pmxd=60000&pmad=2"></input>
+          </div>
+
+          <button id="lauch-dm-button" class="btn btn-primary">Relaunch Dailymotion</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
   <script>
 
-    var iu = "/21636860837/PurePeople/Instream/Content/Site"
-    var custParams = "ad=teste"
-    var additionalVastParams = "pmnd=0&pmxd=60000&pmad=2"
-    var rand = Math.floor(Math.random() * 99999999);
+    var elem = document.querySelector("#lauch-dm-button")
+    elem.addEventListener("click", function(e) {
+      e.preventDefault()
+      launchDM({"iu": document.querySelector('input[name="iu"]').value, "cust_params": document.querySelector('input[name="cust_params"]').value, "additional_vast_params": document.querySelector('input[name="additional_vast_params"]').value})
+    })
 
-    dailymotion.createPlayer('instreamPlayer', {
-      video: 'x89avpd',
-      referrerPolicy: "no-referrer-when-downgrade",
-      params: {
-        mute: true,
-        customConfig: {customParams: encodeURIComponent(iu) + "/" + encodeURIComponent(custParams) + '&' + additionalVastParams + '&scor=' + rand},
-      }
-    });
+    function launchDM(params) {
+      console.log("Dailymotion launched with :")
+      console.table(params)
+      var iu = params.iu || "/21636860837/PurePeople/Instream/Content/Site"
+      var custParams = params.custParams || "ad=teste"
+      var additionalVastParams = params.additionalVastParams || "pmnd=0&pmxd=60000&pmad=2"
+      var rand = Math.floor(Math.random() * 99999999);
+
+      dailymotion.createPlayer('instreamPlayer', {
+        video: 'x89avpd',
+        referrerPolicy: "no-referrer-when-downgrade",
+        params: {
+          mute: true,
+          customConfig: {customParams: encodeURIComponent(iu) + "/" + encodeURIComponent(custParams) + '&' + additionalVastParams + '&scor=' + rand},
+        }
+      });
+    }
+
+    launchDM({"iu": document.querySelector('input[name="iu"]').value, "cust_params": document.querySelector('input[name="cust_params"]').value, "additional_vast_params": document.querySelector('input[name="additional_vast_params"]').value})
+
   </script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
