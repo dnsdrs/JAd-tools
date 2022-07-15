@@ -59,21 +59,22 @@
     })
 
     function launchDM(params) {
-      console.log("Dailymotion launched with :")
-      console.table(params)
-      var iu = params.iu || "/21636860837/PurePeople/Instream/Content/Site"
-      var custParams = params.custParams || "ad=teste"
-      var additionalVastParams = params.additionalVastParams || "pmnd=0&pmxd=60000&pmad=2"
-      var rand = Math.floor(Math.random() * 99999999);
+
+      var formatedParams = encodeURIComponent(params.iu) + "/" + encodeURIComponent(params.custParams) + '&' + params.additionalVastParams + '&scor=' + Math.floor(Math.random() * 99999999)
 
       dailymotion.createPlayer('instreamPlayer', {
         video: 'x89avpd',
         referrerPolicy: "no-referrer-when-downgrade",
         params: {
           mute: true,
-          customConfig: {customParams: encodeURIComponent(iu) + "/" + encodeURIComponent(custParams) + '&' + additionalVastParams + '&scor=' + rand},
+          customConfig: {customParams: formatedParams},
         }
       });
+
+      console.log("Dailymotion launched with :")
+      console.table(params)
+      console.log(formatedParams)
+
     }
 
     launchDM({"iu": document.querySelector('input[name="iu"]').value, "cust_params": document.querySelector('input[name="cust_params"]').value, "additional_vast_params": document.querySelector('input[name="additional_vast_params"]').value})
